@@ -30,12 +30,19 @@ public class MeteorSystem extends JPanel {
                 int y = e.getY();
 
                 for (int i = 0; i < n; i++) {
+<<<<<<< HEAD
                     if (show[i] &&  x >= posX[i] && x <= posX[i] + 50
                             && y >= posY[i] && y <= posY[i] + 50) {
                         show[i] = false;
                         isBombing[i] = true;
                         repaint();
                         break;
+=======
+                    if (x >= posX[i] && x <= posX[i] + 50
+                            && y >= posY[i] && y <= posY[i] + 50) {
+                        show[i] = false;
+                        repaint();
+>>>>>>> 2e9e822d7c517f59727c051e2f5f0dcb1f62a30f
                     }
                 }
             }
@@ -130,6 +137,7 @@ public class MeteorSystem extends JPanel {
     public int[] getPosY() {
         return posY;
     }
+<<<<<<< HEAD
 
     public boolean[] getShow() {
         return show;
@@ -138,6 +146,8 @@ public class MeteorSystem extends JPanel {
     public boolean[] getIsBombing(){
         return isBombing;
     }
+=======
+>>>>>>> 2e9e822d7c517f59727c051e2f5f0dcb1f62a30f
 }
 
 class MeteorLogic extends Thread {
