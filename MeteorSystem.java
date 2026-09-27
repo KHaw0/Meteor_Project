@@ -15,13 +15,31 @@ public class MeteorSystem extends JPanel {
     private Image bomb;
     private JFrame frameCount = new JFrame();
     private MeteorLogic[] meteorThread;
-    private JLabel[] lblMeteor;
     private boolean[] show;
+    private boolean[] isBombing;
 
     public boolean isReady = false;
 
     MeteorSystem(Display display) {
         this.display = display;
+
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                int x = e.getX();
+                int y = e.getY();
+
+                for (int i = 0; i < n; i++) {
+                    if (show[i] &&  x >= posX[i] && x <= posX[i] + 50
+                            && y >= posY[i] && y <= posY[i] + 50) {
+                        show[i] = false;
+                        isBombing[i] = true;
+                        repaint();
+                        break;
+                    }
+                }
+            }
+        });
 
         setFrameCount();
     }
@@ -40,25 +58,10 @@ public class MeteorSystem extends JPanel {
         frameCount.add(tfCount);
         frameCount.add(btnApply);
 
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                int x = e.getX();
-                int y = e.getY();
-
-                for (int i = 0; i < n; i++) {
-                    if (x >= posX[i] && x <= posX[i] + 50
-                            && y >= posY[i] && y <= posY[i] + 50) {
-                        show[i] = false;
-                        repaint();
-                    }
-                }
-            }
-        });
-
         frameCount.setVisible(!isReady);
         btnApply.addActionListener(e -> {
-            setMeteor(tfCount);
+            if (!setMeteor(tfCount))
+                return;
             loadImage();
             isReady = !isReady;
 
@@ -72,19 +75,22 @@ public class MeteorSystem extends JPanel {
 
     }
 
-    public void setMeteor(JTextField tfCount) {
+    public boolean setMeteor(JTextField tfCount) {
         try {
             n = Integer.parseInt(tfCount.getText());
         } catch (Exception er) {
-            return;
+            JLabel err = new JLabel("กรุณากรอกตัวเลข!!!");
+            err.setFont(new Font("Tahoma", Font.BOLD, 14));
+            JOptionPane.showMessageDialog(frameCount, err, "ERROR", JOptionPane.INFORMATION_MESSAGE);
+            return false;
         }
 
         meteor = new Image[n];
         posX = new int[n];
         posY = new int[n];
-        lblMeteor = new JLabel[n];
         meteorThread = new MeteorLogic[n];
         show = new boolean[n];
+        isBombing = new boolean[n];
 
         for (int i = 0; i < n; i++) {
             posX[i] = rn.nextInt(0, 535);
@@ -92,14 +98,13 @@ public class MeteorSystem extends JPanel {
             show[i] = true;
             String path = "/Image/meteor" + rn.nextInt(1, 6) + ".png";
             meteor[i] = new ImageIcon(getClass().getResource(path)).getImage();
-            lblMeteor[i] = new JLabel();
             meteorThread[i] = new MeteorLogic(this, i);
-            add(lblMeteor[i]);
         }
+        return true;
     }
 
     public void loadImage() {
-        bomb = new ImageIcon(getClass().getResource("/Image/boom.png")).getImage();
+        bomb = new ImageIcon(getClass().getResource("/Image/bomb.png")).getImage();
         bg = new ImageIcon(getClass().getResource("/Image/background.png")).getImage();
     }
 
@@ -111,13 +116,11 @@ public class MeteorSystem extends JPanel {
 
         for (int i = 0; i < meteor.length; i++) {
             if (show[i]) {
-                g.drawImage(meteor[i], posX[i], posY[i], 50, 50, lblMeteor[i]);
+                g.drawImage(meteor[i], posX[i], posY[i], 50, 50, this);
+            } else if (isBombing[i]) {
+                g.drawImage(bomb, posX[i], posY[i],50, 50, this);
             }
         }
-    }
-
-    public JLabel[] getLblMeteor() {
-        return lblMeteor;
     }
 
     public int[] getPosX() {
@@ -128,6 +131,13 @@ public class MeteorSystem extends JPanel {
         return posY;
     }
 
+    public boolean[] getShow() {
+        return show;
+    }
+
+    public boolean[] getIsBombing(){
+        return isBombing;
+    }
 }
 
 class MeteorLogic extends Thread {
@@ -143,13 +153,27 @@ class MeteorLogic extends Thread {
         this.meteor = meteor;
         this.id = id;
 
-        this.dx = rn.nextBoolean() ? rn.nextInt(0, 4) : -rn.nextInt(0, 4);
-        this.dy = rn.nextBoolean() ? rn.nextInt(0, 4) : -rn.nextInt(0, 4);
+        do {
+            this.dx = rn.nextBoolean() ? rn.nextInt(0, 4) : -rn.nextInt(0, 4);
+            this.dy = rn.nextBoolean() ? rn.nextInt(0, 4) : -rn.nextInt(0, 4);
+        } while (dx == 0 && dy == 0);
     }
 
     @Override
     public void run() {
         while (true) {
+            if (!meteor.getShow()[id]) {
+                meteor.getIsBombing()[id] = true;
+                meteor.repaint();
+                try {
+                    Thread.sleep(500);
+                } catch (Exception e) {
+                }
+                meteor.getIsBombing()[id] = false;
+                meteor.repaint();
+                break; 
+            }
+
             int cx = meteor.getPosX()[id];
             int cy = meteor.getPosY()[id];
 
