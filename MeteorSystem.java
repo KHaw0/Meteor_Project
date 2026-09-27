@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.*;
@@ -41,12 +42,7 @@ public class MeteorSystem extends JPanel {
         frameCount.add(tfCount);
         frameCount.add(btnApply);
 
-        addMouseListener(new MouseListener() {
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-            }
-
+        addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 int x = e.getX();
@@ -56,22 +52,11 @@ public class MeteorSystem extends JPanel {
                     if (x >= posX[i] && x <= posX[i] + 50
                             && y >= posY[i] && y <= posY[i] + 50) {
                         meteor[i] = bomb;
+                        show[i] = false;
+                        repaint();
                     }
                 }
             }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-            }
-
         });
 
         frameCount.setVisible(!isReady);
