@@ -23,6 +23,22 @@ public class MeteorSystem extends JPanel {
     MeteorSystem(Display display) {
         this.display = display;
 
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                int x = e.getX();
+                int y = e.getY();
+
+                for (int i = 0; i < n; i++) {
+                    if (x >= posX[i] && x <= posX[i] + 50
+                            && y >= posY[i] && y <= posY[i] + 50) {
+                        show[i] = false;
+                        repaint();
+                    }
+                }
+            }
+        });
+
         setFrameCount();
     }
 
@@ -39,22 +55,6 @@ public class MeteorSystem extends JPanel {
         frameCount.add(lblCount);
         frameCount.add(tfCount);
         frameCount.add(btnApply);
-
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                int x = e.getX();
-                int y = e.getY();
-
-                for (int i = 0; i < n; i++) {
-                    if (x >= posX[i] && x <= posX[i] + 50
-                            && y >= posY[i] && y <= posY[i] + 50) {
-                        show[i] = false;
-                        repaint();
-                    }
-                }
-            }
-        });
 
         frameCount.setVisible(!isReady);
         btnApply.addActionListener(e -> {
@@ -127,7 +127,6 @@ public class MeteorSystem extends JPanel {
     public int[] getPosY() {
         return posY;
     }
-
 }
 
 class MeteorLogic extends Thread {
