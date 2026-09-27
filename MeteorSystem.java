@@ -1,7 +1,5 @@
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 
@@ -51,7 +49,6 @@ public class MeteorSystem extends JPanel {
                 for (int i = 0; i < n; i++) {
                     if (x >= posX[i] && x <= posX[i] + 50
                             && y >= posY[i] && y <= posY[i] + 50) {
-                        meteor[i] = bomb;
                         show[i] = false;
                         repaint();
                     }
@@ -146,8 +143,8 @@ class MeteorLogic extends Thread {
         this.meteor = meteor;
         this.id = id;
 
-        this.dx = rn.nextBoolean() ? rn.nextInt(0, 6) : -rn.nextInt(0, 6);
-        this.dy = rn.nextBoolean() ? rn.nextInt(0, 6) : -rn.nextInt(0, 6);
+        this.dx = rn.nextBoolean() ? rn.nextInt(0, 4) : -rn.nextInt(0, 4);
+        this.dy = rn.nextBoolean() ? rn.nextInt(0, 4) : -rn.nextInt(0, 4);
     }
 
     @Override
