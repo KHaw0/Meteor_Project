@@ -17,6 +17,5 @@ public class Display extends JFrame {
         system.setBounds(0, 0, 600, 600);
 
         display.add(system);
-        int x = 0;
     }
 }
