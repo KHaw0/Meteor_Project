@@ -30,7 +30,7 @@ public class MeteorSystem extends JPanel {
                 int y = e.getY();
 
                 for (int i = 0; i < n; i++) {
-                    if (show[i] &&  x >= posX[i] && x <= posX[i] + 50
+                    if (show[i] && x >= posX[i] && x <= posX[i] + 50
                             && y >= posY[i] && y <= posY[i] + 50) {
                         show[i] = false;
                         isBombing[i] = true;
@@ -68,7 +68,8 @@ public class MeteorSystem extends JPanel {
             for (MeteorLogic thread : meteorThread) {
                 thread.start();
             }
-
+            MeteorCrash mc = new MeteorCrash(this);
+            mc.start();
             frameCount.setVisible(!isReady);
             display.setVisible(isReady);
         });
@@ -100,6 +101,7 @@ public class MeteorSystem extends JPanel {
             meteor[i] = new ImageIcon(getClass().getResource(path)).getImage();
             meteorThread[i] = new MeteorLogic(this, i);
         }
+
         return true;
     }
 
@@ -118,7 +120,31 @@ public class MeteorSystem extends JPanel {
             if (show[i]) {
                 g.drawImage(meteor[i], posX[i], posY[i], 50, 50, this);
             } else if (isBombing[i]) {
-                g.drawImage(bomb, posX[i], posY[i],50, 50, this);
+                g.drawImage(bomb, posX[i], posY[i], 50, 50, this);
+            }
+        }
+    }
+
+    public void checkCrashMeteor(int i) {
+        if (!show[i])
+            return;
+
+        for (int j = 0; j < n; j++) {
+            if (i == j || !show[j])
+                continue;
+
+            if (posX[i] < posX[j] + 50 && posX[i] + 50 > posX[j]
+                    && posY[i] < posY[j] + 50 && posY[i] + 50 > posY[j]) {
+
+                int meteorbombing = rn.nextInt(0, 2);
+                if (meteorbombing == 0) {
+                    show[i] = false;
+                    isBombing[i] = true;
+                } else {
+                    show[j] = false;
+                    isBombing[j] = true;
+                }
+                return;
             }
         }
     }
@@ -135,8 +161,12 @@ public class MeteorSystem extends JPanel {
         return show;
     }
 
-    public boolean[] getIsBombing(){
+    public boolean[] getIsBombing() {
         return isBombing;
+    }
+
+    public int getCount() {
+        return n;
     }
 }
 
@@ -171,7 +201,7 @@ class MeteorLogic extends Thread {
                 }
                 meteor.getIsBombing()[id] = false;
                 meteor.repaint();
-                break; 
+                break;
             }
 
             int cx = meteor.getPosX()[id];
@@ -206,6 +236,29 @@ class MeteorLogic extends Thread {
 
             try {
                 Thread.sleep(16);
+            } catch (Exception e) {
+            }
+        }
+    }
+}
+
+class MeteorCrash extends Thread {
+    private MeteorSystem meteor;
+
+    public MeteorCrash(MeteorSystem meteor) {
+        this.meteor = meteor;
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            for (int i = 0; i < meteor.getCount(); i++) {
+                meteor.checkCrashMeteor(i);
+            }
+            meteor.repaint();
+
+            try {
+                Thread.sleep(26);
             } catch (Exception e) {
             }
         }
