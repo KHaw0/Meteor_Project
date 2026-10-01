@@ -1,5 +1,4 @@
 import java.awt.*;
-import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 
@@ -22,25 +21,6 @@ public class MeteorSystem extends JPanel {
 
     MeteorSystem(Display display) {
         this.display = display;
-
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                int x = e.getX();
-                int y = e.getY();
-
-                for (int i = 0; i < n; i++) {
-                    if (show[i] && x >= posX[i] && x <= posX[i] + 50
-                            && y >= posY[i] && y <= posY[i] + 50) {
-                        show[i] = false;
-                        isBombing[i] = true;
-                        repaint();
-                        break;
-                    }
-                }
-            }
-        });
-
         setFrameCount();
     }
 
