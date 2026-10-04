@@ -116,7 +116,7 @@ public class MeteorSystem extends JPanel {
             if (posX[i] < posX[j] + 50 && posX[i] + 50 > posX[j]
                     && posY[i] < posY[j] + 50 && posY[i] + 50 > posY[j]) {
 
-                int meteorbombing = rn.nextInt(0, 2);
+                int meteorbombing = rn.nextInt(2);
                 if (meteorbombing == 0) {
                     show[i] = false;
                     isBombing[i] = true;
